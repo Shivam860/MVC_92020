@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<table>
+    <tr>
+        <td>Name :</td>
+        <td><input type="text" id="textName" /></td>
+    </tr>
+
+    <tr>
+        <td>Email :</td>
+        <td><input type="text" id="textEmail" /></td>
+    </tr>
+
+    <tr>
+        <td>Country :</td>
+        <td>
+            <select id="ddlCountry" onchange="State()">
+                <option value="0">--Select--</option>
+            </select>
+        </td>
+    </tr>
+
+    <tr>
+        <td>State :</td>
+        <td>
+            <select id="ddlState" >
+                <option value="0">--Select--</option>
+            </select>
+        </td>
+    </tr>
+
+    <tr>
+        <td>Password :</td>
+        <td><input type="text" id="textPassword" /></td>
+    </tr>
+
+    <tr>
+        <td></td>
+        <td><input type="button" id="tbnSubmit" value="Submit" onclick="BtnClick()" /></td>
+    </tr>
+
+</table>
+
+<table id="tbl" border="1">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Country</th>
+        <th>State</th>
+        <th></th>
+        <th></th>
+    </tr>
+</table>
+
+<script src="~/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        Country();
+        displayData();
+        $("#ddlState").prop("disabled",true);
+    });
+
+    function clear() {
+        $("#textName").val("");
+        $("#textEmail").val("");
+        $("#textPassword").val("");
+        $("#tbnSubmit").val("Submit");
+        $("#ddlState").empty();
+        $("#ddlState").append($('<option/>').attr("value", 0).text("--Select--"));
+        
+        IDD = 0;
+    }
+
+    
+    function BtnClick() {
+        $.ajax({
+            url: 'home/InsertUpdate',
+            type: 'post',
+            data: { A: $("#textName").val(), B: $("#textEmail").val(), C: $("#textPassword").val(), D: IDD, E: $("#ddlCountry").val(), F: $("#ddlState").val()},
+            success: function () {
+                displayData();
+                clear();
+            },
+            error: function () {
+                alert("Record not save");
+            }
+        });
+    }
+
+    function Country() {
+        $.ajax({
+            url: 'home/BindCountry',
+            type: 'post',
+            data: {},
+            success: function (countrydata) {
+                countrydata = JSON.parse(countrydata);
+                for (var i = 0; i < countrydata.length; i++) {
+                    $("#ddlCountry").append($('<option/>').attr("value",countrydata[i].countryid).text(countrydata[i].countryname));
+                }
+            },
+            error: function () {
+                alert("Country not found");
+            }
+        });
+    }
+
+    function State() {
+        $.ajax({
+            url: 'home/BindState',
+            type: 'post',
+            data: { A: $("#ddlCountry").val()},
+            success: function (statedata) {
+                statedata = JSON.parse(statedata);
+                $("#ddlState").prop("disabled", false);
+                $("#ddlState").empty();
+                $("#ddlState").append($('<option/>').attr("value", 0).text("--Select--"));
+                for (var i = 0; i < statedata.length; i++) {
+                    $("#ddlState").append($('<option/>').attr("value", statedata[i].countryid).text(statedata[i].sname));
+                }
+            },
+            error: function () {
+                alert("Country not found");
+            }
+        });
+    }
+
+
+    function displayData() {
+        $.ajax({
+            url: 'home/Display',
+            type: 'post',
+            data: { },
+            success: function (data) {
+                data = JSON.parse(data);
+                $("#tbl").find("tr:gt(0)").remove();
+                for (var i = 0; i < data.length; i++) {
+                    $("#tbl").append('<tr><td>' + data[i].u_name + '</td> <td>' + data[i].u_email + '</td> <td>' + data[i].u_password + '</td> <td>' + data[i].countryname + '</td> <td>' + data[i].sname + '</td> <td><input type="button" id="btn_delete" value="Delete" onclick="deleteData(' + data[i].u_id + ')" /></td> <td><input type="button" id="btn_Edit" value="Edit" onclick="editData(' + data[i].u_id + ')" /></td></tr>');
+                }
+            },
+            error: function () {
+                alert("Display not found");
+            }
+        });
+    }
+
+    function deleteData(id) {
+        $.ajax({
+            url: 'home/Delete',
+            type: 'post',            
+            data: {A : id },            
+            success: function () {
+                displayData();
+            },
+            error: function () {
+                alert("Something went Wrong");
+            }
+        });
+    }
+    var IDD = 0;
+    function editData(idd) {
+        $.ajax({
+            url: 'home/Edit',
+            type: 'post',
+            data: {B : idd},
+            success: function (tbl) {
+                tbl = JSON.parse(tbl);
+                $("#textName").val(tbl[0].u_name);
+                $("#textEmail").val(tbl[0].u_email);
+                $("#textPassword").val(tbl[0].u_password);
+                $("#ddlCountry").val(tbl[0].countryid);
+                State();
+                $("#ddlState").val(tbl[0].stateid);
+                $("#tbnSubmit").val("Update");
+                IDD = idd;
+            },
+            error: function () {
+                alert("Something went Wrong");
+            }
+        });
+    }
+
+</script>
