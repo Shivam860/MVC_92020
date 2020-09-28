@@ -200,7 +200,7 @@
                 data = JSON.parse(data);
                 $("#tbl").find("tr:gt(0)").remove();
                 for (var i = 0; i < data.length; i++) {
-                    $("#tbl").append('<tr><td>' + data[i].u_name + '</td> <td>' + data[i].u_email + '</td> <td>' + data[i].u_password + '</td> <td>' + data[i].countryname + '</td> <td>' + data[i].sname + '</td> <td>' + (data[i].gender == 1 ? "Male" : data[i].gender == 2 ? "Female":"Others" ) + '</td> <td><input type="button" id="btn_delete" value="Delete" onclick="deleteData(' + data[i].u_id + ')" /></td> <td><input type="button" id="btn_Edit" value="Edit" onclick="editData(' + data[i].u_id + ')" /></td></tr>');
+                    $("#tbl").append('<tr><td>' + data[i].u_name + '</td> <td>' + data[i].u_email + '</td> <td>' + data[i].u_password + '</td> <td>' + data[i].countryname + '</td> <td>' + data[i].sname + '</td> <td>' + (data[i].gender == 1 ? "Male" : data[i].gender == 2 ? "Female" : "Others") + '</td><td>' + data[i].Dob + '</td> <td><input type="button" id="btn_delete" value="Delete" onclick="deleteData(' + data[i].u_id + ')" /></td> <td><input type="button" id="btn_Edit" value="Edit" onclick="editData(' + data[i].u_id + ')" /></td></tr>');
                 }
             },
             error: function () {

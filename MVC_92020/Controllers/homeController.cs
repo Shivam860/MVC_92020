@@ -24,9 +24,8 @@ namespace MVC_92020.Controllers
             if (obj.D == 0)
             {
                 con.Open();
-                SqlCommand com = new SqlCommand("procuser", con);
+                SqlCommand com = new SqlCommand("InsertProc", con);
                 com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.AddWithValue("@action", "insert");
                 com.Parameters.AddWithValue("@u_name", obj.A);
                 com.Parameters.AddWithValue("@u_email", obj.B);
                 com.Parameters.AddWithValue("@u_password", obj.C);
@@ -40,9 +39,8 @@ namespace MVC_92020.Controllers
             else
             {
                 con.Open();
-                SqlCommand com = new SqlCommand("procuser", con);
+                SqlCommand com = new SqlCommand("updateProc", con);
                 com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.AddWithValue("@action", "update");
                 com.Parameters.AddWithValue("@u_name", obj.A);
                 com.Parameters.AddWithValue("@u_email", obj.B);
                 com.Parameters.AddWithValue("@u_password", obj.C);
@@ -60,9 +58,8 @@ namespace MVC_92020.Controllers
         {
             string data = "";
             con.Open();
-            SqlCommand com = new SqlCommand("procuser", con);
+            SqlCommand com = new SqlCommand("displayData", con);
             com.CommandType = CommandType.StoredProcedure;
-            com.Parameters.AddWithValue("@action", "display");
             SqlDataAdapter da = new SqlDataAdapter(com);
             DataTable dt = new DataTable();
             da.Fill(dt);
@@ -119,9 +116,8 @@ namespace MVC_92020.Controllers
         public void Delete(Emp_Insert obj)
         {
             con.Open();
-            SqlCommand com = new SqlCommand("procuser", con);
+            SqlCommand com = new SqlCommand("Deleteproc", con);
             com.CommandType = CommandType.StoredProcedure;
-            com.Parameters.AddWithValue("@action", "delete");
             com.Parameters.AddWithValue("@u_id", obj.A);
             com.ExecuteNonQuery();
             con.Close();
@@ -131,9 +127,8 @@ namespace MVC_92020.Controllers
         {
             string data = "";
             con.Open();
-            SqlCommand com = new SqlCommand("procuser", con);
+            SqlCommand com = new SqlCommand("Editproc", con);
             com.CommandType = CommandType.StoredProcedure;
-            com.Parameters.AddWithValue("@action", "edit");
             com.Parameters.AddWithValue("@u_id", obj.B);
             SqlDataAdapter da = new SqlDataAdapter(com);
             DataTable dt = new DataTable();
