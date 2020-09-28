@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 using Newtonsoft.Json;
+using MVC_92020.Models;
 
 namespace MVC_92020.Controllers
 {
@@ -18,19 +19,21 @@ namespace MVC_92020.Controllers
             return View();
         }
 
-        public void InsertUpdate(string A, string B, string C,int D,int E,int F)
+        public void InsertUpdate(Emp_Insert obj)
         {
-            if (D == 0)
+            if (obj.D == 0)
             {
                 con.Open();
                 SqlCommand com = new SqlCommand("procuser", con);
                 com.CommandType = CommandType.StoredProcedure;
                 com.Parameters.AddWithValue("@action", "insert");
-                com.Parameters.AddWithValue("@u_name", A);
-                com.Parameters.AddWithValue("@u_email", B);
-                com.Parameters.AddWithValue("@u_password", C);
-                com.Parameters.AddWithValue("@countryid", E);
-                com.Parameters.AddWithValue("@stateid", F);
+                com.Parameters.AddWithValue("@u_name", obj.A);
+                com.Parameters.AddWithValue("@u_email", obj.B);
+                com.Parameters.AddWithValue("@u_password", obj.C);
+                com.Parameters.AddWithValue("@countryid", obj.E);
+                com.Parameters.AddWithValue("@stateid", obj.F);
+                com.Parameters.AddWithValue("@gender", obj.G);
+                com.Parameters.AddWithValue("@dob", obj.H);
                 com.ExecuteNonQuery();
                 con.Close();
             }
@@ -40,12 +43,14 @@ namespace MVC_92020.Controllers
                 SqlCommand com = new SqlCommand("procuser", con);
                 com.CommandType = CommandType.StoredProcedure;
                 com.Parameters.AddWithValue("@action", "update");
-                com.Parameters.AddWithValue("@u_name", A);
-                com.Parameters.AddWithValue("@u_email", B);
-                com.Parameters.AddWithValue("@u_password", C);
-                com.Parameters.AddWithValue("@u_id", D);
-                com.Parameters.AddWithValue("@countryid", E);
-                com.Parameters.AddWithValue("@stateid", F);
+                com.Parameters.AddWithValue("@u_name", obj.A);
+                com.Parameters.AddWithValue("@u_email", obj.B);
+                com.Parameters.AddWithValue("@u_password", obj.C);
+                com.Parameters.AddWithValue("@u_id", obj.D);
+                com.Parameters.AddWithValue("@countryid", obj.E);
+                com.Parameters.AddWithValue("@stateid", obj.F);
+                com.Parameters.AddWithValue("@gender", obj.G);
+                com.Parameters.AddWithValue("@dob", obj.H);
                 com.ExecuteNonQuery();
                 con.Close();
             }
@@ -66,6 +71,22 @@ namespace MVC_92020.Controllers
             return Json(data,JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult searchDataa(Emp_Insert obj)
+        {
+            string Searchdata = "";
+            con.Open();
+            SqlCommand com = new SqlCommand("searchProc", con);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Parameters.AddWithValue("@ids", obj.A);
+            com.Parameters.AddWithValue("@search", obj.B);
+            SqlDataAdapter da = new SqlDataAdapter(com);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            con.Close();
+            Searchdata = JsonConvert.SerializeObject(dt);
+            return Json(Searchdata, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult BindCountry()
         {
             string countrydata = "";
@@ -80,13 +101,13 @@ namespace MVC_92020.Controllers
             return Json(countrydata, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult BindState(int A)
+        public JsonResult BindState(Emp_Insert obj)
         {
             string statedata = "";
             con.Open();
             SqlCommand com = new SqlCommand("stateproc", con);
             com.CommandType = CommandType.StoredProcedure;
-            com.Parameters.AddWithValue("@countryid", A);
+            com.Parameters.AddWithValue("@countryid", obj.A);
             SqlDataAdapter da = new SqlDataAdapter(com);
             DataTable dt = new DataTable();
             da.Fill(dt);
@@ -95,25 +116,25 @@ namespace MVC_92020.Controllers
             return Json(statedata, JsonRequestBehavior.AllowGet);
         }
 
-        public void Delete(int A)
+        public void Delete(Emp_Insert obj)
         {
             con.Open();
             SqlCommand com = new SqlCommand("procuser", con);
             com.CommandType = CommandType.StoredProcedure;
             com.Parameters.AddWithValue("@action", "delete");
-            com.Parameters.AddWithValue("@u_id", A);
+            com.Parameters.AddWithValue("@u_id", obj.A);
             com.ExecuteNonQuery();
             con.Close();
         }
 
-        public JsonResult Edit(int B)
+        public JsonResult Edit(Emp_Insert obj)
         {
             string data = "";
             con.Open();
             SqlCommand com = new SqlCommand("procuser", con);
             com.CommandType = CommandType.StoredProcedure;
             com.Parameters.AddWithValue("@action", "edit");
-            com.Parameters.AddWithValue("@u_id", B);
+            com.Parameters.AddWithValue("@u_id", obj.B);
             SqlDataAdapter da = new SqlDataAdapter(com);
             DataTable dt = new DataTable();
             da.Fill(dt);
